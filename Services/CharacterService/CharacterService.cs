@@ -1,4 +1,5 @@
 using Dotnet_Rpg.Models;
+using Dotnet_Rpg.Models.Util;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,20 +15,27 @@ namespace Dotnet_Rpg.Services.CharacterService
             new Character(),
             new Character {Name = "Gandalf", Class = RpgClass.Mage}
         };
-        public async Task<List<Character>> AddCharacter(Character character)
+
+        public async Task<ServiceResponse<List<Character>>> AddCharacter(Character character)
         {
+            ServiceResponse<List<Character>> serviceResponse = new ServiceResponse<List<Character>>();
             _characters.Add(character);
-            return _characters;
+            serviceResponse.Data = _characters;
+            return serviceResponse;
         }
 
-        public async Task<List<Character>> GetAllCharacters()
+        public async Task<ServiceResponse<List<Character>>> GetAllCharacters()
         {
-            return _characters;
+            ServiceResponse<List<Character>> serviceResponse = new ServiceResponse<List<Character>>();
+            serviceResponse.Data = _characters;
+            return serviceResponse;
         }
 
-        public async Task<Character> GetCharacterById(int id)
+        public async Task<ServiceResponse<Character>> GetCharacterById(int id)
         {
-            return _characters.FirstOrDefault(c => c.Id == id);
+            ServiceResponse<Character> serviceResponse = new ServiceResponse<Character>();
+            serviceResponse.Data = _characters.FirstOrDefault(c => c.Id == id);
+            return serviceResponse;
         }
     }
 }
