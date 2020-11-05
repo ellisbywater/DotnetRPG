@@ -1,5 +1,8 @@
-﻿using Dotnet_Rpg.Models;
+﻿using Dotnet_Rpg.Dtos.User;
+using Dotnet_Rpg.Models;
 using Dotnet_Rpg.Models.Util;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -22,22 +25,12 @@ namespace Dotnet_Rpg.Data
         }
 
         /// <summary>
-        /// Login to API Service via username and password
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        public Task<ServiceResponse<string>> Login(string userName, string password)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
         /// Register for token authentication via User Model and password
         /// </summary>
         /// <param name="user"></param>
         /// <param name="password"></param>
         /// <returns></returns>
+        [HttpPost("Register")]
         public async Task<ServiceResponse<int>> Register(User user, string password)
         {
             ServiceResponse<int> response = new ServiceResponse<int>();
@@ -45,6 +38,7 @@ namespace Dotnet_Rpg.Data
             {
                 response.Success = false;
                 response.Message = "User already exists";
+                return response;
             }
             CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
 
@@ -54,6 +48,36 @@ namespace Dotnet_Rpg.Data
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
             response.Data = user.Id;
+            return response;
+        }
+
+
+        /// <summary>
+        /// Login via User Model and password
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        /// 
+        [HttpPost("Login")]
+        public async Task<ServiceResponse<string>> Login(string username, string password)
+        {
+            ServiceResponse<string> response = new ServiceResponse<string>();
+            User user = await _context.Users.FirstOrDefaultAsync(x => x.Username.ToLower().Equals(username.ToLower()));
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = "User already exists";
+            }
+            else if(!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            {
+                response.Success = false;
+                response.Message = "Wrong Password";
+            }
+            else
+            {
+                response.Data = user.Id.ToString();
+            }
             return response;
         }
 
@@ -88,6 +112,20 @@ namespace Dotnet_Rpg.Data
             }
         }
 
-       
+        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                for(int i = 0; i < computedHash.Length; i++)
+                {
+                    if(computedHash[i] != passwordHash[i])
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
     }
 }
