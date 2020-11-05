@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dotnet_Rpg.Dtos;
 using Dotnet_Rpg.Dtos.Character;
 using Dotnet_Rpg.Models;
 using Dotnet_Rpg.Services.CharacterService;
@@ -44,5 +45,17 @@ namespace Dotnet_Rpg.Controllers
         {
             return Ok(await _characterService.AddCharacter(character));
         }
+        [HttpPut]
+        public async Task<IActionResult> UpdateCharacter(UpdateCharacterDTO character)
+        {
+            return Ok(await _characterService.UpdateCharacter(character));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            return Ok(await _characterService.DeleteCharacter(id));
+        }
+
     }
 }

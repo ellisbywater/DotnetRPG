@@ -8,8 +8,8 @@ namespace Dotnet_Rpg.Models
         public int Stamina { get; set; } = 100;
         public int Mana { get; set; } = 100;
         public int Strength { get; set; } = 10;
-        public int Willpower { get; set; } = 10;
-        public int Cunning { get; set; } = 10;
+        public int Intelligence { get; set; } = 10;
+        public int Agility { get; set; } = 10;
         public int Magic { get; set; } = 10;
         public RpgClass Class { get; set; } = RpgClass.Knight;
     }
