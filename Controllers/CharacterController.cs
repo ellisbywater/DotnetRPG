@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Dotnet_Rpg.Dtos;
 using Dotnet_Rpg.Dtos.Character;
 using Dotnet_Rpg.Models;
 using Dotnet_Rpg.Services.CharacterService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dotnet_Rpg.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CharacterController: ControllerBase
@@ -32,7 +35,8 @@ namespace Dotnet_Rpg.Controllers
         [HttpGet("GetAll")]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _characterService.GetAllCharacters());
+            int userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            return Ok(await _characterService.GetAllCharacters(userId));
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSingle(int id)
