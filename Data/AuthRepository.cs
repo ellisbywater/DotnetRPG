@@ -119,6 +119,13 @@ namespace Dotnet_Rpg.Data
             }
         }
 
+        /// <summary>
+        /// Check to make sure password and compute has are in sync
+        /// </summary>
+        /// <param name="password"></param>
+        /// <param name="passwordHash"></param>
+        /// <param name="passwordSalt"></param>
+        /// <returns></returns>
         private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
             using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
@@ -135,6 +142,11 @@ namespace Dotnet_Rpg.Data
             }
         }
 
+        /// <summary>
+        /// Create JWT Token
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         private string CreateToken(User user)
         {
             List<Claim> claims = new List<Claim>

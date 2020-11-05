@@ -32,11 +32,15 @@ namespace Dotnet_Rpg.Controllers
         private static Character knight = new Character();
         
 
+        /// <summary>
+        /// Get All Characters
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetAll")]
         public async Task<IActionResult> Get()
         {
-            int userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            return Ok(await _characterService.GetAllCharacters(userId));
+            //int userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            return Ok(await _characterService.GetAllCharacters());
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSingle(int id)
